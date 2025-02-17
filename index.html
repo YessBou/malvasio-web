@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=cancel" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat';
+        }
+
+        .div-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1000;
+            background-color: white;
+            display: none;
+        }
+
+        .div-end {
+            display: flex;
+            justify-content: end;
+            margin: 0px;
+        }
+
+        .b-cruz {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .titulo-popup {
+            margin: 8px 0px
+        }
+
+        .subtitulo-popup {
+            font-size: 14px;
+            margin: 0px;
+        }
+
+        .contenido-popup {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 16px 0px;
+        }
+
+        .popup-inputs {
+            border: black solid 1px;
+            padding: 12px;
+            width: 300px;
+            border-radius: 8px;
+        }
+
+        .boton-principal {
+            font-family: 'Montserrat';
+            font-size: 14px;
+            padding: 8px 24px;
+            cursor: pointer;
+            background: linear-gradient(90deg, #1a2e7f, #004390, #00569b, #0068a0, #0079a0, #00899c, #009996, #00a88f);
+            border: none;
+            border-radius: 50px;
+            color: white;
+        }
+
+        .boton-principal:hover {
+            background: #1a2e7f;
+        }
+
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.469);
+            z-index: 999;
+            display: none;
+        }
+
+        .validaciones-campos {
+            color: red;
+            font-size: 12px;
+            margin: 2px 0 5px 0;
+            min-height: 18px;
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay"></div>
+    <div id="popup" class="div-popup">
+        <div class="div-end">
+            <button class="b-cruz" onclick="cerrarPopup()">
+                <span class="material-symbols-outlined">
+                    cancel
+                </span>
+            </button>
+        </div>
+
+
+        <h2 class="titulo-popup">Suscríbete y recibe promociones exclusivas</h2>
+        <p class="subtitulo-popup">Sé el primero en enterarte de nuestros lanzamientos y novedades</p>
+        <div class="contenido-popup">
+            <div>
+                <iframe style="border: none;"
+                    src="https://lottie.host/embed/e954fb70-7e1e-4210-b6a1-28927194af9c/0QLral6dP8.lottie"></iframe>
+            </div>
+
+            <div>
+                <div>
+                    <input type="text" id="nombre" class="popup-inputs" placeholder="Ingresá tu nombre y apellido *"
+                        maxlength="30" required oninput="validarCampo('nombre')" />
+                    <p id="errorNombre" class="validaciones-campos"></p>
+                </div>
+
+                <div>
+                    <input type="email" id="email" class="popup-inputs" placeholder="Ingresá tu email *" maxlength="50"
+                        required oninput="validarCampo('email')" />
+                    <p id="errorEmail" class="validaciones-campos"></p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="div-end">
+            <button onclick="enviarSuscripcion()" class="boton-principal">Suscribirse</button>
+        </div>
+
+
+        <script>
+            const seSuscribio = true
+            const seMostroPopup = true
+
+            window.onload = function () {
+                let seSuscribioLocal = JSON.parse(localStorage.getItem('seSuscribio'))
+                let seMostroPopupLocal = JSON.parse(sessionStorage.getItem('seMostroPopup'))
+
+                console.log('seSuscribioLocal: ' + seSuscribioLocal)
+                
+                if (seSuscribioLocal || seMostroPopupLocal) {
+                    return
+                }
+
+                document.querySelector('.overlay').style.display = 'block'
+                setTimeout(() => {
+                    document.getElementById("popup").style.display = "block";
+                    sessionStorage.setItem('seMostroPopup', JSON.stringify(seMostroPopup))
+                }, 1000);
+            };
+
+            function cerrarPopup() {
+                document.getElementById("popup").style.display = "none";
+                document.querySelector('.overlay').style.display = 'none'
+            }
+
+
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            function validarCampo(id) {
+                let valor = document.getElementById(id).value.trim();
+                let errorCampo = document.getElementById(`error${id.charAt(0).toUpperCase() + id.slice(1)}`);
+
+                if (id === "email") {
+                    if (valor === "") {
+                        errorCampo.innerText = "Campo obligatorio";
+                        errorCampo.style.visibility = "visible";
+                    } else if (!emailRegex.test(valor)) {
+                        errorCampo.innerText = "Email inválido";
+                        errorCampo.style.visibility = "visible";
+                    } else {
+                        errorCampo.style.visibility = "hidden";
+                    }
+                } else {
+                    errorCampo.innerText = "Campo obligatorio";
+                    errorCampo.style.visibility = valor === "" ? "visible" : "hidden";
+                }
+            }
+
+            function enviarSuscripcion() {
+                let nombre = document.getElementById("nombre").value.trim();
+                let email = document.getElementById("email").value.trim();
+                let errorNombre = document.getElementById("errorNombre");
+                let errorEmail = document.getElementById("errorEmail");
+
+                let valido = true;
+
+                if (nombre === "") {
+                    errorNombre.innerText = "Campo obligatorio";
+                    errorNombre.style.visibility = "visible";
+                    valido = false;
+                }
+
+                if (email === "") {
+                    errorEmail.innerText = "Campo obligatorio";
+                    errorEmail.style.visibility = "visible";
+                    valido = false;
+                } else if (!emailRegex.test(email)) {
+                    errorEmail.innerText = "Email inválido";
+                    errorEmail.style.visibility = "visible";
+                    valido = false;
+                }
+
+                if (!valido) return;
+
+                let scriptUrl = "https://script.google.com/macros/s/AKfycbyC_G5nfRD74ygzn0_SidawIgknBcExvU7iKYaOndi-_0SdtYlAKa-V8ZpiM65Xw6J5gg/exec"
+                    + "?nombre=" + encodeURIComponent(nombre)
+                    + "&email=" + encodeURIComponent(email);
+
+
+                fetch(scriptUrl)
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log("Gracias por suscribirte!");
+                        localStorage.setItem('seSuscribio', JSON.stringify(seSuscribio))
+                        cerrarPopup();
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+
+
+        </script>
+
+
+</body>
+
+</html>
