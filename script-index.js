@@ -13,7 +13,7 @@ window.onload = function () {
     setTimeout(() => {
         document.getElementById("popup").style.display = "block";
         sessionStorage.setItem("seMostroPopup", JSON.stringify(seMostroPopup));
-    }, 1000);
+    }, 100);
 };
 
 function cerrarPopup() {
